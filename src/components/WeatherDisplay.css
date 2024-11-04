@@ -1,0 +1,37 @@
+.weather-display {
+    text-align: center; /* Центрирование текста */
+    margin-top: 20px; /* Отступ сверху */
+    font-size:18px;
+}
+
+.weather-display img {
+    width: 100px; /* Ширина иконки погоды */
+    background-color: var(--color-surface-mixed-a0);
+    border-radius: 50%;
+    border:5px solid rgba(255,255,255,0.5)
+}
+
+.weather-display__temp{
+    width:250px;
+    border-radius:50px;
+    place-self: center;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+}
+.weather-display__temp__value{
+    margin-left:5px;
+}
+.weather-display__temp__sign{
+    border:1px solid var(--color-primary-a50);
+    transition:all 0.3s ease-out;
+    border-radius:10px;
+    height:min-content;
+    padding:5px;
+    text-align: center;
+    margin-left:5px;
+    cursor:pointer;
+}
+.weather-display__temp__sign:hover{
+    background-color: var(--color-primary-a50);
+}

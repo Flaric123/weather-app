@@ -1,30 +1,35 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import axios from 'axios';
+import { ref } from 'vue';
+import CitySelector from './components/CitySelector.vue';
+import WeatherDisplay from './components/WeatherDisplay.vue';
+
+export default {
+  components: {
+    CitySelector,
+    WeatherDisplay
+  },
+  data() {
+    return {
+      weather: null,
+      apiKey: '07ce4bef8128dbce05740fd8b99c212a'
+    };
+  },
+  methods: {
+    async getWeather(city) {
+      try {
+        const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.apiKey}&units=metric`);
+        this.weather = response.data;
+      } catch (error) {
+        console.error("Ошибка при получении данных о погоде:", error);
+      }
+    }
+  }
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+  <WeatherDisplay v-if="weather" :weather="weather"/>
+  <CitySelector @city-selected="getWeather" />
+</template>
