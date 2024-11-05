@@ -1,0 +1,35 @@
+.day-selector__group{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    border-radius:20px;
+    background-color: var(--color-surface-a10);
+
+}
+.day-selector{
+    display:flex;
+    flex-direction:row;
+}
+.day-selector input{
+    appearance: none;
+    display:none;
+}
+.day-selector label{
+    padding:5px;
+    background-color: transparent;
+    border-radius:20px;
+    font-family: "Nunito", sans-serif;
+    color:white;
+    transition:all 0.3s ease-out;
+}
+.day-selector input:checked~label{
+    background-color:var(--color-primary-a50);
+    
+}
+.day-selector input:checked~label+.day-selector label:hover{
+    background-color: var(--color-surface-a0);
+}
+.day-selector label:hover{
+    cursor:pointer;
+    background-color:var(--color-primary-a10);
+}
