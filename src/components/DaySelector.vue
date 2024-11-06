@@ -1,7 +1,7 @@
 <template>
     <div class="day-selector">
         <input type="radio" :id="'radio__id__'+id" :value="value" v-model="model"/>
-        <label :for="'radio__id__'+id">{{new Date(value).toDateString()}}</label>
+        <label :for="'radio__id__'+id">{{value.value}}</label>
     </div>
 </template>
 
@@ -11,7 +11,3 @@
     const model=defineModel()
     const {id,value}=defineProps(['id','value'])
 </script>
-
-<style lang="css" scoped>
-
-</style>

@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'BezierSans';
+  src: url('/src/assets/fonts/Bézier Sans_variable.ttf');
+}
+
 :root{
   /** Dark theme primary colors */
 --color-primary-a0: #b1459c;
@@ -43,7 +48,7 @@ body {
 }
 
 h2, p{
-  font-family: "Nunito", sans-serif;
+  font-family: "BezierSans", sans-serif;
   font-optical-sizing: auto;
   font-weight: normal;
   font-style: normal;

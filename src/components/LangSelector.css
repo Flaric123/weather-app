@@ -1,0 +1,33 @@
+.lang-selector{
+    height: min-content;
+    width:fit-content;
+    position: relative;
+}
+.lang-selector svg{
+    width:30px;
+    bottom:5px;
+    left:35px;
+    position:absolute;
+    height:min-content;
+    place-self:center center;
+    pointer-events: none;
+}
+.lang-selector select{
+    font-family:BezierSans serif;
+    background-color:var(--color-surface-a40);
+    border:1px solid transparent;
+    border-radius: 20px;
+    width:70px;
+    padding:5px 5px;
+    place-self:center center;
+    appearance: none;
+    font-size:30px;
+    outline:none;
+    color:white;
+}
+.lang-selector select option{
+    font-family:BezierSans serif;
+    background-color:var(--color-surface-a0);
+    color:white;
+    font-size:30px;
+}

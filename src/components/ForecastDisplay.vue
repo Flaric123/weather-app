@@ -4,24 +4,52 @@
   import DaySelector from './DaySelector.vue';
   import './ForecastDisplay.css'
   import './DaySelector.css'
+import { useI18n } from 'vue-i18n';
 
   const props=defineProps(['forecast']);
   const currentCardId=ref(0);
-  const currentDate=new Date()
-  const list=[0,1,2,3,4,5].map((value)=>new Date(currentDate.getTime()+value*(24*60*60*1000)).toLocaleDateString())
-  const currentDay=ref(currentDate.toLocaleDateString());
-  const filteredForecast=computed(()=>{
-    return props.forecast.filter((item)=>formatDate(item.dt)==currentDay.value)
-  })
+  const currentDate=new Date();
+  const isTimeCurrent=ref(true);
 
-  function formatDate(timestamp) {
-      const date = new Date(timestamp * 1000);
-      return date.toLocaleDateString(); // Форматируем дату
+  class DateObj{
+    constructor(pos,value){
+      this.value=value;
+      this.pos=pos;
+    }
   }
 
-  function formatTime(timestamp) {
+  const {locale}=useI18n();
+  const list=computed(()=>[0,1,2,3,4,5].map((value)=>new DateObj(value,new Date(currentDate.getTime()+value*(24*60*60*1000)).toLocaleDateString(locale.value=='en'?'en-en':'ru-ru'))))
+  const currentDayValue=ref(0);
+  const currentDay=computed({
+    get(){
+      return list.value[currentDayValue.value]
+    },
+    set(newValue){
+      currentDayValue.value=newValue.pos;
+    }
+  });
+
+  const filteredForecast=computed(()=>{
+    return props.forecast.filter((item)=>formatDateToLocal(item.dt)==list.value[currentDayValue.value].value);
+  })
+
+  function formatDateToLocal(timestamp) {
       const date = new Date(timestamp * 1000);
-      return date.toLocaleTimeString(); // Форматируем дату
+      return date.toLocaleDateString(locale.value=='en'?'en-en':'ru-ru'); // Форматируем дату
+  }
+
+  function formatTimeToLocal(timestamp) {
+      const date = new Date(timestamp * 1000);
+      return date.toLocaleTimeString(locale.value=='en'?'en-en':'ru-ru'); // Форматируем дату
+  }
+
+  function formatTime(timestamp){
+    return new Date(timestamp * 1000).toTimeString();
+  }
+
+  function formatDate(timestamp){
+    return new Date(timestamp * 1000).toDateString()
   }
 
   function onLeftArrowClick(event){
@@ -36,9 +64,11 @@
     document.getElementById(currentCardId.value)?.scrollIntoView({behavior:'smooth'})
   }
 
+  function handleTimeClick(event){
+    isTimeCurrent.value=!isTimeCurrent.value;
+}
   onMounted(()=>{
-    document.getElementById(currentCardId.value)?.scrollIntoView({behavior:'smooth'});
-    console.log(filteredForecast.value[0].dt_txt)
+    document.getElementById(0)?.scrollIntoView({behavior:'smooth'});
   })
 
 </script>
@@ -53,10 +83,13 @@
     </div>
     <div class="forecast-display">
       <div v-for="(day, index) in filteredForecast" :key="index" class="forecast-day" :id="index">
-        <p>{{ formatDate(day.dt) }}</p>
-        <p>{{ formatTime(day.dt) }}</p>
-        <p>Температура: {{day.main.temp}} °C</p>
-        <p>Описание: {{ day.weather[0].description }}</p>
+        <p class="forecast-display__time" @click="handleTimeClick">{{isTimeCurrent?formatTimeToLocal(day.dt): formatTime(day.dt) }}</p>
+        <p class="forecast-display__time__caption">{{isTimeCurrent?'По текущему времени':'По локальному времени'}}</p>
+        <p>{{ $t('temperature') }}: {{day.main.temp}} °C</p>
+        <p>{{$t('description')}}: {{ day.weather[0].description }}</p>
+        <p>{{$t('humidity')}}: {{ day.main.humidity }}%</p>
+        <p>{{$t('pressure')}}: {{ day.main.pressure }} гПа</p>
+        <p>{{$t('wind')}}: {{ day.wind.speed }} м/с, {{$t('direction')}} {{ day.wind.deg }}°</p>
         <img :src="'http://openweathermap.org/img/wn/' + day.weather[0].icon + '@2x.png'" alt="weather icon">
       </div>
     </div>

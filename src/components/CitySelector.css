@@ -2,11 +2,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom:20px;
 }
 
 .city-selector select {
     padding: 10px;
     font-size: 16px;
+    font-family: "BezierSans", sans-serif;
     border-radius: 20px;
     background-color: var(--color-surface-a10);
     width: 250px; /* Ширина выпадающего списка */
