@@ -4,13 +4,10 @@
   import DaySelector from './DaySelector.vue';
   import './ForecastDisplay.css'
   import './DaySelector.css'
-import { useI18n } from 'vue-i18n';
+  import { useI18n } from 'vue-i18n';
+  import ExpandableBox from './ExpandableBox.vue';
 
   const props=defineProps(['forecast']);
-  const currentCardId=ref(0);
-  const currentDate=new Date();
-  const isTimeCurrent=ref(true);
-
   class DateObj{
     constructor(pos,value){
       this.value=value;
@@ -18,6 +15,9 @@ import { useI18n } from 'vue-i18n';
     }
   }
 
+  const currentCardId=ref(0);
+  const currentDate=new Date();
+  const isTimeCurrent=ref(true);
   const {locale}=useI18n();
   const list=computed(()=>[0,1,2,3,4,5].map((value)=>new DateObj(value,new Date(currentDate.getTime()+value*(24*60*60*1000)).toLocaleDateString(locale.value=='en'?'en-en':'ru-ru'))))
   const currentDayValue=ref(0);
@@ -29,10 +29,10 @@ import { useI18n } from 'vue-i18n';
       currentDayValue.value=newValue.pos;
     }
   });
-
   const filteredForecast=computed(()=>{
     return props.forecast.filter((item)=>formatDateToLocal(item.dt)==list.value[currentDayValue.value].value);
   })
+  const isCelsius=ref(true);
 
   function formatDateToLocal(timestamp) {
       const date = new Date(timestamp * 1000);
@@ -53,22 +53,27 @@ import { useI18n } from 'vue-i18n';
   }
 
   function onLeftArrowClick(event){
-    currentCardId.value=(currentCardId.value-1)%filteredForecast.value.length;
+    currentCardId.value=(currentCardId.value-1);
     if (currentCardId.value<0)
       currentCardId.value=filteredForecast.value.length-1;
-    document.getElementById(currentCardId.value)?.scrollIntoView({behavior:'smooth'})
+    document.getElementById(currentCardId.value)?.scrollIntoView({behavior:'smooth',inline:'center'})
   }
 
   function onRightArrowClick(event){
     currentCardId.value=(currentCardId.value+1)%filteredForecast.value.length;
-    document.getElementById(currentCardId.value)?.scrollIntoView({behavior:'smooth'})
+    document.getElementById(currentCardId.value)?.scrollIntoView({behavior:'smooth',inline:'center'})
   }
 
   function handleTimeClick(event){
     isTimeCurrent.value=!isTimeCurrent.value;
-}
+  }
+
+  function convergeTemperature(event){
+    isCelsius.value=!isCelsius.value;
+  }
+
   onMounted(()=>{
-    document.getElementById(0)?.scrollIntoView({behavior:'smooth'});
+    document.getElementById(0)?.scrollIntoView({behavior:'smooth',inline:'center',block:'center'});
   })
 
 </script>
@@ -85,12 +90,20 @@ import { useI18n } from 'vue-i18n';
       <div v-for="(day, index) in filteredForecast" :key="index" class="forecast-day" :id="index">
         <p class="forecast-display__time" @click="handleTimeClick">{{isTimeCurrent?formatTimeToLocal(day.dt): formatTime(day.dt) }}</p>
         <p class="forecast-display__time__caption">{{isTimeCurrent?'По текущему времени':'По локальному времени'}}</p>
-        <p>{{ $t('temperature') }}: {{day.main.temp}} °C</p>
-        <p>{{$t('description')}}: {{ day.weather[0].description }}</p>
-        <p>{{$t('humidity')}}: {{ day.main.humidity }}%</p>
-        <p>{{$t('pressure')}}: {{ day.main.pressure }} гПа</p>
-        <p>{{$t('wind')}}: {{ day.wind.speed }} м/с, {{$t('direction')}} {{ day.wind.deg }}°</p>
+        
+        <!-- <p>{{ $t('temperature') }}: {{day.main.temp}} °C</p> -->
+        
         <img :src="'http://openweathermap.org/img/wn/' + day.weather[0].icon + '@2x.png'" alt="weather icon">
+      <div class="weather-display__temp">
+        <p class="weather-display__temp__value">{{ isCelsius?day.main.temp : Math.round((day.main.temp*1.8+32+Number.EPSILON)*100)/100 }}</p>
+        <p class="weather-display__temp__sign" @click="convergeTemperature" style="font-size: 14px;">{{isCelsius?'°C':'°F'}}</p>
+      </div>
+        <ExpandableBox contentHeight="250">
+          <p>{{$t('description')}}: {{ day.weather[0].description }}</p>
+          <p>{{$t('humidity')}}: {{ day.main.humidity }}%</p>
+          <p>{{$t('pressure')}}: {{ day.main.pressure }} гПа</p>
+          <p>{{$t('wind')}}: {{ day.wind.speed }} м/с, {{$t('direction')}} {{ day.wind.deg }}°</p>
+        </ExpandableBox>
       </div>
     </div>
     <div class="forecast-arrow-right" @click="onRightArrowClick" :style="filteredForecast.length<=1?'pointer-events: none;':''">

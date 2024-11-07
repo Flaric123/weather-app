@@ -6,6 +6,7 @@ import WeatherDisplay from './components/WeatherDisplay.vue';
 import ForecastDisplay from './components/ForecastDisplay.vue';
 import { useI18n } from 'vue-i18n';
 import LangSelector from './components/LangSelector.vue';
+import ExpandableBox from './components/ExpandableBox.vue';
 
 
   const weather=ref(null);
@@ -36,8 +37,10 @@ import LangSelector from './components/LangSelector.vue';
 </script>
 
 <template>
-  <ForecastDisplay v-if="forecast.length" :forecast="forecast" />  
-  <CitySelector @city-selected="getWeather" />
-  <WeatherDisplay v-if="weather" :weather="weather"/>
   <LangSelector v-model="locale"/>
+  <div class="mainApp">
+    <ForecastDisplay v-if="forecast.length" :forecast="forecast" />  
+    <CitySelector @city-selected="getWeather" />
+    <WeatherDisplay v-if="weather" :weather="weather"/>
+  </div>
 </template>
