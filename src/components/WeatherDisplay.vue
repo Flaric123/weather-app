@@ -14,7 +14,7 @@ import './WeatherDisplay.css'
 
 <template>
     <div class="weather-display">
-      <p class="weather-display__header-caption">Текущая погода</p>
+      <p class="weather-display__header-caption">{{$t('currentWeather')}}</p>
       <img :src="'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@2x.png'" alt="weather icon">
       <div class="weather-display__temp">
         <p class="weather-display__temp__value">{{ isCelsius?weather.main.temp : Math.round((weather.main.temp*1.8+32+Number.EPSILON)*100)/100 }}</p>

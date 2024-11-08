@@ -8,7 +8,9 @@ const messages={
         pressure:'Pressure',
         wind:'Wind',
         direction:'direction',
-        weather:'Weather in'
+        weather:'Weather in',
+        byCurrentTime:'According to the current time',
+        currentWeather:'Current weather',
     },
     ru:{
         description:'Описание',
@@ -17,7 +19,9 @@ const messages={
         pressure:'Давление',
         wind:'Ветер',
         direction:'направление',
-        weather:'Погода в '
+        weather:'Погода в ',
+        byCurrentTime:'По текущему времени',
+        currentWeather:'Текущая погода',
     }
 }
 

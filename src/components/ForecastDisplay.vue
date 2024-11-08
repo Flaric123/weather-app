@@ -7,7 +7,7 @@
   import { useI18n } from 'vue-i18n';
   import ExpandableBox from './ExpandableBox.vue';
 
-  const props=defineProps(['forecast']);
+  const {forecast,gmtOffset}=defineProps(['forecast','gmtOffset']);
   class DateObj{
     constructor(pos,value){
       this.value=value;
@@ -30,7 +30,7 @@
     }
   });
   const filteredForecast=computed(()=>{
-    return props.forecast.filter((item)=>formatDateToLocal(item.dt)==list.value[currentDayValue.value].value);
+    return forecast.filter((item)=>formatDateToLocal(item.dt)==list.value[currentDayValue.value].value);
   })
   const isCelsius=ref(true);
 
@@ -44,12 +44,21 @@
       return date.toLocaleTimeString(locale.value=='en'?'en-en':'ru-ru'); // Форматируем дату
   }
 
-  function formatTime(timestamp){
-    return new Date(timestamp * 1000).toTimeString();
+  function calcGmtOffset(){
+    let gmtOffsetFormatted='';
+    if (gmtOffset>0){
+      gmtOffsetFormatted=Math.abs(gmtOffset)>=10?`+${gmtOffset}:00`:`+0${gmtOffset}:00`;
+    }
+    else{
+       gmtOffsetFormatted=Math.abs(gmtOffset)>=10?`${gmtOffset}:00`:`-0${Math.abs(gmtOffset)}:00`;
+    }
+    return gmtOffsetFormatted;;
   }
 
-  function formatDate(timestamp){
-    return new Date(timestamp * 1000).toDateString()
+  function formatTime(timestamp){
+    const gmtOffsetFormatted=calcGmtOffset();
+    console.log(gmtOffset);
+    return new Date(new Date(timestamp * 1000).toISOString().replace('Z','')+gmtOffsetFormatted).toLocaleTimeString(locale.value);
   }
 
   function onLeftArrowClick(event){
@@ -89,16 +98,13 @@
     <div class="forecast-display">
       <div v-for="(day, index) in filteredForecast" :key="index" class="forecast-day" :id="index">
         <p class="forecast-display__time" @click="handleTimeClick">{{isTimeCurrent?formatTimeToLocal(day.dt): formatTime(day.dt) }}</p>
-        <p class="forecast-display__time__caption">{{isTimeCurrent?'По текущему времени':'По локальному времени'}}</p>
-        
-        <!-- <p>{{ $t('temperature') }}: {{day.main.temp}} °C</p> -->
-        
+        <p class="forecast-display__time__caption">{{isTimeCurrent?$t('byCurrentTime'):'По локальному времени'}}</p>
         <img :src="'http://openweathermap.org/img/wn/' + day.weather[0].icon + '@2x.png'" alt="weather icon">
       <div class="weather-display__temp">
         <p class="weather-display__temp__value">{{ isCelsius?day.main.temp : Math.round((day.main.temp*1.8+32+Number.EPSILON)*100)/100 }}</p>
         <p class="weather-display__temp__sign" @click="convergeTemperature" style="font-size: 14px;">{{isCelsius?'°C':'°F'}}</p>
       </div>
-        <ExpandableBox contentHeight="250">
+        <ExpandableBox contentHeight="225">
           <p>{{$t('description')}}: {{ day.weather[0].description }}</p>
           <p>{{$t('humidity')}}: {{ day.main.humidity }}%</p>
           <p>{{$t('pressure')}}: {{ day.main.pressure }} гПа</p>
