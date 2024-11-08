@@ -8,7 +8,6 @@ import { useI18n } from 'vue-i18n';
 import LangSelector from './components/LangSelector.vue';
 import ExpandableBox from './components/ExpandableBox.vue';
 
-
   const weather=ref(null);
   const forecast=ref([]);
   const gmtOffset=ref('Z');
