@@ -6,7 +6,6 @@ import WeatherDisplay from './components/WeatherDisplay.vue';
 import ForecastDisplay from './components/ForecastDisplay.vue';
 import { useI18n } from 'vue-i18n';
 import LangSelector from './components/LangSelector.vue';
-import ExpandableBox from './components/ExpandableBox.vue';
 
   const weather=ref(null);
   const forecast=ref([]);
@@ -17,13 +16,13 @@ import ExpandableBox from './components/ExpandableBox.vue';
 
     async function getWeather(city) {
       try {
-        const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=${locale.value}`);
+        const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=${locale.value}`);
         weather.value = response.data;
 
         const { lat, lon } = weather.value.coord;
 
-        const forecastResponse = await axios.get(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=${locale.value}`);
-        const timezoneResponse=await axios.get(`http://api.geonames.org/timezoneJSON?lat=${lat}&lng=${lon}&username=${geoNameUsername}`)
+        const forecastResponse = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=${locale.value}`);
+        const timezoneResponse=await axios.get(`https://api.geonames.org/timezoneJSON?lat=${lat}&lng=${lon}&username=${geoNameUsername}`)
         
         gmtOffset.value=timezoneResponse.data.gmtOffset-(-(new Date().getTimezoneOffset())/60);
         forecast.value = forecastResponse.data.list;
